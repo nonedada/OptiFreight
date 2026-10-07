@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Logistics platform operator or administrator profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique user ID" },
+        "name": { "type": "string", "description": "Full name" },
+        "email": { "type": "string", "description": "Email address" },
+        "role": { "type": "string", "enum": ["admin", "operator"], "description": "User access role" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Enterprise freight client account",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Customer account ID" },
+        "company_name": { "type": "string", "description": "Company name" },
+        "contact_name": { "type": "string", "description": "Contact person name" },
+        "email": { "type": "string", "description": "Contact email" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "address": { "type": "string", "description": "Physical shipping street address" },
+        "city": { "type": "string", "description": "Destination city" },
+        "priority": { "type": "string", "enum": ["Standard", "High", "Urgent"], "description": "Account priority tier" },
+        "notes": { "type": "string", "description": "Logistics handling notes" },
+        "createdAt": { "type": "string", "description": "Account registration date" }
+      },
+      "required": ["id", "company_name", "contact_name", "email", "phone", "city", "priority"]
+    },
+    "Item": {
+      "title": "Item",
+      "description": "SKU catalog item with weight and volumetric attributes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique Item ID" },
+        "sku": { "type": "string", "description": "SKU code" },
+        "name": { "type": "string", "description": "Item description name" },
+        "description": { "type": "string", "description": "Item packaging details" },
+        "category": { "type": "string", "description": "Industry classification" },
+        "weight_kg": { "type": "number", "description": "Weight per unit in kilograms" },
+        "volume_m3": { "type": "number", "description": "Volume cube per unit in cubic meters" },
+        "stock_quantity": { "type": "number", "description": "Available stock quantity" },
+        "createdAt": { "type": "string", "description": "Item registration timestamp" }
+      },
+      "required": ["id", "sku", "name", "category", "weight_kg", "volume_m3"]
+    },
+    "ContainerType": {
+      "title": "ContainerType",
+      "description": "Specifications for transport unit classes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Container model ID" },
+        "name": { "type": "string", "description": "Container model display name" },
+        "description": { "type": "string", "description": "Model description" },
+        "max_weight_kg": { "type": "number", "description": "Maximum payload weight in kg" },
+        "max_volume_m3": { "type": "number", "description": "Maximum usable cubic volume in m3" },
+        "cost_mad": { "type": "number", "description": "Base trip transportation cost in MAD" }
+      },
+      "required": ["id", "name", "max_weight_kg", "max_volume_m3", "cost_mad"]
+    },
+    "Container": {
+      "title": "Container",
+      "description": "Physical transport unit container in fleet",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Container unit ID" },
+        "code": { "type": "string", "description": "Container unit code" },
+        "type_id": { "type": "string", "description": "Reference to ContainerType" },
+        "status": { "type": "string", "enum": ["Available", "Allocated", "Prepared", "Dispatched", "Maintenance"], "description": "Operational status" },
+        "current_location": { "type": "string", "description": "Current depot location" }
+      },
+      "required": ["id", "code", "type_id", "status"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Shipment consignment order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Order ID" },
+        "order_number": { "type": "string", "description": "Consignment number" },
+        "customer_id": { "type": "string", "description": "Client ID reference" },
+        "customer_name": { "type": "string", "description": "Client company name" },
+        "customer_city": { "type": "string", "description": "Destination city" },
+        "order_date": { "type": "string", "description": "Intake order date" },
+        "status": { "type": "string", "enum": ["Pending", "Ready", "Optimized", "Packed", "Dispatched", "Delivered", "Cancelled"], "description": "Order lifecycle status" },
+        "priority": { "type": "string", "enum": ["Standard", "High", "Urgent"], "description": "Dispatch priority" },
+        "notes": { "type": "string", "description": "Special instructions" },
+        "total_weight_kg": { "type": "number", "description": "Aggregated payload weight in kg" },
+        "total_volume_m3": { "type": "number", "description": "Aggregated payload volume in m3" },
+        "items": { "type": "array", "description": "Contained freight item lines" }
+      },
+      "required": ["id", "order_number", "customer_id", "order_date", "status", "priority", "total_weight_kg", "total_volume_m3"]
+    },
+    "OptimizationRun": {
+      "title": "OptimizationRun",
+      "description": "Audit record of an execution of the container optimization algorithm",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Optimization run ID" },
+        "run_date": { "type": "string", "description": "Execution timestamp" },
+        "allow_splitting": { "type": "boolean", "description": "Whether consignment items could be partitioned" },
+        "total_orders_count": { "type": "number", "description": "Orders included" },
+        "total_items_count": { "type": "number", "description": "Total units" },
+        "total_weight_kg": { "type": "number", "description": "Gross weight" },
+        "total_volume_m3": { "type": "number", "description": "Total packed cube volume" },
+        "containers_before": { "type": "number", "description": "Containers required before optimization" },
+        "cost_before_mad": { "type": "number", "description": "Cost before optimization" },
+        "containers_after": { "type": "number", "description": "Containers required after optimization" },
+        "cost_after_mad": { "type": "number", "description": "Cost after optimization" },
+        "containers_saved": { "type": "number", "description": "Number of containers saved" },
+        "cost_saved_mad": { "type": "number", "description": "MAD transportation cost saved" },
+        "savings_percentage": { "type": "number", "description": "Percentage savings" },
+        "status": { "type": "string", "enum": ["Draft", "Confirmed", "Dispatched"], "description": "Manifest status" },
+        "created_by": { "type": "string", "description": "Operator user ID" },
+        "allocations": { "type": "array", "description": "Container allocations breakdown" }
+      },
+      "required": ["id", "run_date", "total_orders_count", "containers_before", "containers_after", "cost_after_mad", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile collection"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Enterprise customer directory"
+    },
+    "/items/{itemId}": {
+      "schema": "Item",
+      "description": "Item specifications catalog"
+    },
+    "/container_types/{typeId}": {
+      "schema": "ContainerType",
+      "description": "Container model specifications"
+    },
+    "/containers/{containerId}": {
+      "schema": "Container",
+      "description": "Physical container fleet units"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Daily freight consignments"
+    },
+    "/optimization_runs/{runId}": {
+      "schema": "OptimizationRun",
+      "description": "Historical daily optimization runs"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "OptiFreight - Logistics & Container Allocation Optimizer",
+  "description": "Enterprise freight optimization and container allocation management platform for minimizing transportation costs and packing footprints.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
